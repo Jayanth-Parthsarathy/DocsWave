@@ -1,15 +1,14 @@
-import express from 'express';
-import { PrismaClient } from '@prisma/client'
-import dotenv from 'dotenv';
-import cors from "cors"
+import express from "express";
+import { PrismaClient } from "@prisma/client";
+import dotenv from "dotenv";
+import cors from "cors";
 import http from "http";
 import { Server } from "socket.io";
-import authRouter from './routes/authRoutes';
-import userRouter from './routes/userRoutes';
-import documentRouter from './routes/documentRoutes';
+import authRouter from "./routes/authRoutes";
+import userRouter from "./routes/userRoutes";
+import documentRouter from "./routes/documentRoutes";
 dotenv.config();
-const prisma = new PrismaClient()
-
+const prisma = new PrismaClient();
 
 async function main() {
   const app = express();
@@ -21,17 +20,24 @@ async function main() {
       methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     },
   });
-  app.use(express.json())
-  app.use(cors())
-  app.use('/api/auth', authRouter)
-  app.use('/api/user', userRouter)
-  app.use('/api/document', documentRouter)
-  io.on('connection', (socket) => {
-    console.log('a user connected');
-    socket.on("edit", (data)=>{
-      console.log(data)
-      socket.broadcast.emit("edit", (data))
-    })
+  app.use(express.json());
+  app.use(cors());
+  app.use("/api/auth", authRouter);
+  app.use("/api/user", userRouter);
+  app.use("/api/document", documentRouter);
+  io.on("connection", (socket) => {
+    console.log("a user connected");
+    socket.on("document", (obj) => {
+      socket.join(obj);
+      console.log(obj)
+      socket.on("edit", (data) => {
+        socket.broadcast.to(obj).emit("edit", data);
+      });
+      socket.on("leave", (documentId) => {
+        socket.leave(documentId)
+        socket.removeAllListeners("edit");
+      });
+    });
   });
   server.listen(port, () => {
     console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
@@ -40,10 +46,10 @@ async function main() {
 
 main()
   .then(async () => {
-    await prisma.$disconnect()
+    await prisma.$disconnect();
   })
   .catch(async (e) => {
-    console.error(e)
-    await prisma.$disconnect()
-    process.exit(1)
-  })
+    console.error(e);
+    await prisma.$disconnect();
+    process.exit(1);
+  });

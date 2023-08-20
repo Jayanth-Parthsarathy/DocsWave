@@ -2,10 +2,17 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../utils/axios";
 import { Document } from "../types/document";
+import { Socket } from "socket.io-client";
 
-const Home = () => {
+type Props = {
+  socket: Socket;
+};
+const Home = (props: Props) => {
   const navigate = useNavigate();
   const [documents, setDocuments] = useState<Document[]>([]);
+  const handleDocumentClick = async (documentId: string) => {
+    navigate("/document/" + documentId);
+  };
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -23,7 +30,10 @@ const Home = () => {
     <div>
       {documents.map((document) => (
         <div key={document.id}>
-          <a href={`document/${document.id}`}> {document.title}</a>
+          <button onClick={() => handleDocumentClick(document.id)}>
+            {" "}
+            {document.title}
+          </button>
         </div>
       ))}
     </div>

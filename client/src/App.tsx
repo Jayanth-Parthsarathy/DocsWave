@@ -7,7 +7,7 @@ import socket from "./libs/socket";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
+    element: <Home socket={socket} />,
   },
   {
     path: "/login",

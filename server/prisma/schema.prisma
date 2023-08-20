@@ -1,5 +1,5 @@
-// This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
+// This is your Prisma schema file,
 
 generator client {
   provider = "prisma-client-js"
@@ -10,18 +10,34 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Permission {
+  VIEW
+  WRITE
+}
+
 model User {
-  id        String     @id @default(uuid())
-  email     String     @unique
-  name      String
-  password  String
-  documents Document[]
+  id             String           @id @default(uuid())
+  email          String           @unique
+  name           String
+  password       String
+  documents      Document[]
+  SharedDocument SharedDocument[]
 }
 
 model Document {
-  id       String  @id @default(uuid())
-  title    String
-  text     String?
-  author   User    @relation(fields: [authorId], references: [id])
-  authorId String
+  id             String           @id @default(uuid())
+  title          String
+  text           String?
+  author         User             @relation(fields: [authorId], references: [id])
+  authorId       String
+  SharedDocument SharedDocument[]
+}
+
+model SharedDocument {
+  id          String     @id @default(uuid())
+  documentId  String
+  userId      String
+  permissions Permission @default(VIEW)
+  document    Document   @relation(fields: [documentId], references: [id])
+  user        User       @relation(fields: [userId], references: [id])
 }

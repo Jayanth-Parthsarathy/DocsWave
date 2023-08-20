@@ -5,6 +5,7 @@ import { Document } from "../types/document";
 import { Socket } from "socket.io-client";
 import Editor from "../components/Editor";
 
+const SAVE_INTERVAL_MS = 2000
 type Props = {
   socket: Socket;
 };
@@ -18,6 +19,12 @@ const DocumentView = (props: Props) => {
     };
     fetchDocument();
   }, []);
+  useEffect(() => {
+    props.socket.emit("document", id)
+    return ()=>{
+      props.socket.emit("leave", id)
+    }
+  }, [props.socket, id])
   return (
     <div>
       <div>{document?.title}</div>

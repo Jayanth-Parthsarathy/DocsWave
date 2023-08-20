@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import Quill from "quill";
+import axios from "../utils/axios";
 import "quill/dist/quill.snow.css";
 import { useParams } from "react-router-dom";
 import { Socket } from "socket.io-client";
@@ -23,10 +24,12 @@ type Props = {
 
 export default function TextEditor(props: Props) {
   const { id: documentId } = useParams();
+  const [text, setText] = useState<any>(null);
   const [quill, setQuill] = useState<Quill>();
+
   useEffect(() => {
     if (props.socket == null || quill == null) return;
-    const handler = (delta) => {
+    const handler = (delta: any) => {
       quill.updateContents(delta);
     };
     props.socket.on("edit", handler);
@@ -35,10 +38,11 @@ export default function TextEditor(props: Props) {
       props.socket.off("edit", handler);
     };
   }, [props.socket, quill]);
+
   useEffect(() => {
     if (props.socket == null || quill == null) return;
 
-    const handler = (delta, oldDelta, source) => {
+    const handler = (delta: any, oldDelta: any, source: any) => {
       if (source !== "user") return;
       props.socket.emit("edit", delta);
     };
@@ -48,6 +52,39 @@ export default function TextEditor(props: Props) {
       quill.off("text-change", handler);
     };
   }, [props.socket, quill]);
+  useEffect(() => {
+    if (quill == null) return;
+
+    const interval = setInterval(async () => {
+      const payload = { text: JSON.stringify(quill?.getContents()) };
+      await axios.put(
+        `/document/update/${documentId}`,
+        payload,
+      );
+    }, SAVE_INTERVAL_MS);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [quill]);
+  useEffect(() => {
+    const fetchDocument = async () => {
+      try {
+        const { data } = await axios.get(`/document/${documentId}`);
+        const obj = JSON.parse(data.text);
+        setText(obj);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchDocument();
+  }, [documentId]);
+
+  useEffect(() => {
+    if (quill && text) {
+      quill.setContents(text);
+    }
+  }, [quill, text]);
 
   const wrapperRef = useCallback((wrapper: any) => {
     if (wrapper == null) return;
@@ -60,5 +97,7 @@ export default function TextEditor(props: Props) {
     });
     setQuill(q);
   }, []);
-  return <div className="container" ref={wrapperRef}></div>;
+  return (
+      <div className="container" ref={wrapperRef}></div>
+  );
 }
