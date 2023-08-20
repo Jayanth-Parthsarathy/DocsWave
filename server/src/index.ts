@@ -28,6 +28,10 @@ async function main() {
   app.use('/api/document', documentRouter)
   io.on('connection', (socket) => {
     console.log('a user connected');
+    socket.on("edit", (data)=>{
+      console.log(data)
+      socket.broadcast.emit("edit", (data))
+    })
   });
   server.listen(port, () => {
     console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
