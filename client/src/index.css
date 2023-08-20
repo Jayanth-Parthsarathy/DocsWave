@@ -1,3 +1,42 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body,
+#root {
+  height: 100vh;
+  width: 100vw;
+  background: black;
+  font-family: "Poppins", sans-serif;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
+#scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.ql-toolbar .ql-stroke {
+  fill: none;
+  stroke: #fff;
+}
+
+.ql-toolbar .ql-fill {
+  fill: #fff;
+  stroke: none;
+}
+
+.ql-toolbar .ql-picker {
+  color: #fff;
+}
+.ql-container.ql-snow,
+.ql-toolbar.ql-snow {
+  border: 1px solid #36454f;
+}
+.ql-container::-webkit-scrollbar {
+  display: none;
+}
+

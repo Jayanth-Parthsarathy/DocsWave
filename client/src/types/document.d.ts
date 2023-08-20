@@ -3,4 +3,6 @@ export interface Document {
   id: string,
   text: string,
   title:string,
+  updatedAt: Date,
+  createdAt: Date,
 }

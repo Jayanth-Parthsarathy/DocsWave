@@ -4,6 +4,7 @@ import axios from "../utils/axios";
 import "quill/dist/quill.snow.css";
 import { useParams } from "react-router-dom";
 import { Socket } from "socket.io-client";
+import "../index.css"
 
 const SAVE_INTERVAL_MS = 2000;
 const TOOLBAR_OPTIONS = [
@@ -57,10 +58,7 @@ export default function TextEditor(props: Props) {
 
     const interval = setInterval(async () => {
       const payload = { text: JSON.stringify(quill?.getContents()) };
-      await axios.put(
-        `/document/update/${documentId}`,
-        payload,
-      );
+      await axios.put(`/document/update/${documentId}`, payload);
     }, SAVE_INTERVAL_MS);
 
     return () => {
@@ -97,7 +95,5 @@ export default function TextEditor(props: Props) {
     });
     setQuill(q);
   }, []);
-  return (
-      <div className="container" ref={wrapperRef}></div>
-  );
+  return <div id="container" className="text-white h-5/6 w-4/6 mx-auto" ref={wrapperRef}></div>;
 }

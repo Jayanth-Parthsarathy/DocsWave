@@ -6,14 +6,13 @@ const prisma = new PrismaClient();
 const createDocument = async (req: AuthRequest, res: Response) => {
   try {
     const { userId } = req;
-    const { title, text } = req.body;
-    if (!title || !text) {
-      return res.status(400).send({ message: "Specify all the fields" });
+    const { title } = req.body;
+    if (!title) {
+      return res.status(400).send({ message: "Specify the title" });
     }
     const document = await prisma.document.create({
       data: {
         title,
-        text,
         author: { connect: { id: userId } },
       },
     });
@@ -72,6 +71,9 @@ const getUserDocuments = async (req: AuthRequest, res: Response) => {
     const { userId } = req;
     const documents = await prisma.document.findMany({
       where: { authorId: userId },
+      orderBy: {
+        updatedAt: "desc" 
+      }
     });
     if (!(documents.length > 0)) {
       return res.status(400).send({ message: "User has no documents" });
@@ -97,4 +99,10 @@ const getUserDocument = async (req: AuthRequest, res: Response) => {
     return res.status(500).send({ message: error.message });
   }
 };
-export { createDocument, deleteDocument, updateDocument, getUserDocuments, getUserDocument };
+export {
+  createDocument,
+  deleteDocument,
+  updateDocument,
+  getUserDocuments,
+  getUserDocument,
+};
