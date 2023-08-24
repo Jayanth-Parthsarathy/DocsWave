@@ -4,7 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "concurrently \"cd client && npm run dev\" \"cd server && npm run dev\""
+    "start": "concurrently \"cd client && npm run dev\" \"cd server && npm run dev\"",
+    "install-server": "cd server && npm install && cd .. &&  npm run build-server",
+    "build-server": "cd server && npm run build",
+    "start-server": "cd server && npm start",
+    "install-client": "cd client && npm install",
+    "build-client": "cd client && npm run build",
+    "start-client": "cd client && npm run preview"
   },
   "keywords": [],
   "author": "",
