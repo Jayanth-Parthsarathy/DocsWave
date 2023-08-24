@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "concurrently \"cd client && npm run dev\" \"cd server && npm run dev\"",
-    "install-server": "cd server &&  npm install && npx prisma generate && cd .. &&  npm run build-server",
+    "install-server": "cd server &&  npm install && npx prisma generate && npx prisma db push && cd .. &&  npm run build-server",
     "build-server": "cd server && npm run build",
     "start-server": "cd server && npm start",
     "install-client": "cd client && npm install",
