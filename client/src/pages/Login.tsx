@@ -39,6 +39,12 @@ const Login = () => {
             Login
           </button>
         </form>
+          <button
+            className="underline text-blue-500 text-sm"
+            onClick={()=>navigate("/register")}
+          >
+            Register
+          </button>
       </div>
     </div>
   );

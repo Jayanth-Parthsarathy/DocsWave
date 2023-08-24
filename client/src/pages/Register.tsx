@@ -48,6 +48,12 @@ const Register = () => {
             Register
           </button>
         </form>
+        <button
+          className="underline text-blue-500 text-sm"
+          onClick={() => navigate("/login")}
+        >
+          Login
+        </button>
       </div>
     </div>
   );
