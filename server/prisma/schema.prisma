@@ -12,7 +12,7 @@ datasource db {
 
 enum Permission {
   VIEW
-  WRITE
+  EDIT
 }
 
 model User {
