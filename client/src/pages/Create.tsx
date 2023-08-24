@@ -2,9 +2,8 @@ import { FormEvent, useState } from "react";
 import axios from "../utils/axios";
 import { useNavigate } from "react-router-dom";
 
-type Props = {};
 
-const Create = (props: Props) => {
+const Create = () => {
   const [title, setTitle] = useState<string>("");
   const navigate = useNavigate()
   const handleSubmit = async (e:FormEvent) => {
@@ -13,7 +12,7 @@ const Create = (props: Props) => {
     navigate("/document/"+data.id)
   };
   return (
-    <div className="h-full w-full bg-black text-white flex items-center justify-center bg-[url('/login_page.jpg')] bg-no-repeat bg-cover">
+    <div className="h-full w-full bg-black text-white flex items-center justify-center bg-no-repeat bg-cover">
       <div className="h-[500px] w-[500px] bg-[#313338] rounded-lg p-5 px-20">
         <div className="text-center mt-14">
           <h1 className="text-5xl">DocWave ✨ </h1>

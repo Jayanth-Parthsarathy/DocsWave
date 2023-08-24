@@ -8,7 +8,7 @@ import Create from "./pages/Create";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home socket={socket} />,
+    element: <Home />,
   },
   {
     path: "/login",

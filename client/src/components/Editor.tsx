@@ -4,7 +4,7 @@ import axios from "../utils/axios";
 import "quill/dist/quill.snow.css";
 import { useParams } from "react-router-dom";
 import { Socket } from "socket.io-client";
-import "../index.css"
+import "../index.css";
 
 const SAVE_INTERVAL_MS = 2000;
 const TOOLBAR_OPTIONS = [
@@ -27,6 +27,7 @@ export default function TextEditor(props: Props) {
   const { id: documentId } = useParams();
   const [text, setText] = useState<any>(null);
   const [quill, setQuill] = useState<Quill>();
+  const [permission, setPermission] = useState<boolean>(false);
 
   useEffect(() => {
     if (props.socket == null || quill == null) return;
@@ -44,6 +45,7 @@ export default function TextEditor(props: Props) {
     if (props.socket == null || quill == null) return;
 
     const handler = (delta: any, oldDelta: any, source: any) => {
+      console.log(oldDelta);
       if (source !== "user") return;
       props.socket.emit("edit", delta);
     };
@@ -55,7 +57,6 @@ export default function TextEditor(props: Props) {
   }, [props.socket, quill]);
   useEffect(() => {
     if (quill == null) return;
-
     const interval = setInterval(async () => {
       const payload = { text: JSON.stringify(quill?.getContents()) };
       await axios.put(`/document/update/${documentId}`, payload);
@@ -69,7 +70,12 @@ export default function TextEditor(props: Props) {
     const fetchDocument = async () => {
       try {
         const { data } = await axios.get(`/document/${documentId}`);
-        const obj = JSON.parse(data.text);
+        if (data.permission == undefined) {
+          setPermission(true);
+        } else if (data.permission == "EDIT") {
+          setPermission(true);
+        }
+        const obj = JSON.parse(data.document.text);
         setText(obj);
       } catch (error) {
         console.error(error);
@@ -84,16 +90,28 @@ export default function TextEditor(props: Props) {
     }
   }, [quill, text]);
 
-  const wrapperRef = useCallback((wrapper: any) => {
-    if (wrapper == null) return;
-    wrapper.innerHTML = "";
-    const editor = document.createElement("div");
-    wrapper.append(editor);
-    const q = new Quill(editor, {
-      theme: "snow",
-      modules: { toolbar: TOOLBAR_OPTIONS },
-    });
-    setQuill(q);
-  }, []);
-  return <div id="container" className="text-white h-5/6 w-4/6 mx-auto" ref={wrapperRef}></div>;
+  const wrapperRef = useCallback(
+    (wrapper: any) => {
+      if (wrapper == null) return;
+      wrapper.innerHTML = "";
+      const editor = document.createElement("div");
+      wrapper.append(editor);
+      const q = new Quill(editor, {
+        theme: "snow",
+        modules: { toolbar: TOOLBAR_OPTIONS },
+      });
+      if (!permission) {
+        q.disable();
+      }
+      setQuill(q);
+    },
+    [permission],
+  );
+  return (
+    <div
+      id="container"
+      className="text-white h-5/6 w-4/6 mx-auto"
+      ref={wrapperRef}
+    ></div>
+  );
 }
