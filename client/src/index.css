@@ -39,4 +39,12 @@ body::-webkit-scrollbar {
 .ql-container::-webkit-scrollbar {
   display: none;
 }
+.ql-toolbar .ql-picker-item {
+  color: white;
+  background: black;
+}
+.ql-toolbar .ql-picker-options{
+  color: white;
+  background: black;
+}
 
