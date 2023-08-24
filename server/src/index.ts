@@ -26,10 +26,8 @@ async function main() {
   app.use("/api/user", userRouter);
   app.use("/api/document", documentRouter);
   io.on("connection", (socket) => {
-    console.log("a user connected");
     socket.on("document", (obj) => {
       socket.join(obj);
-      console.log(obj)
       socket.on("edit", (data) => {
         socket.broadcast.to(obj).emit("edit", data);
       });
